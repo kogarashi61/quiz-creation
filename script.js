@@ -26,7 +26,6 @@ function loadQuizzesFromStorage() {
     }
 }
 
-// 【変更点1】別解を配列として取得するように修正
 function parseRawText(text) {
     const newWords = [];
     const lines = text.split('\n');
