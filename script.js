@@ -426,3 +426,70 @@ document.getElementById('backBtn').addEventListener('click', function() {
     document.getElementById('homeScreen').style.display = 'block';
     renderQuizList();
 });
+// ==========================================
+// ▼ バックアップ（エクスポート・インポート）機能 ▼
+// ==========================================
+
+// 1. データをファイルとして保存（エクスポート）
+document.getElementById('exportBtn').addEventListener('click', function() {
+    if (savedQuizzes.length === 0) {
+        alert('保存するクイズがありません。');
+        return;
+    }
+
+    // データをJSON文字列に変換
+    const dataStr = JSON.stringify(savedQuizzes, null, 2);
+    // テキストファイルとしてダウンロードさせるための処理
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my_quizzes_backup.json'; // 保存されるファイル名
+    
+    document.body.appendChild(a);
+    a.click(); // 自動的にクリックしてダウンロードを開始
+    
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+// 2. ファイル選択画面を開く
+document.getElementById('importBtn').addEventListener('click', function() {
+    document.getElementById('importFile').click();
+});
+
+// 3. 選択されたファイルを読み込んで復元（インポート）
+document.getElementById('importFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            // ファイルの中身をデータ（配列）に戻す
+            const importedData = JSON.parse(e.target.result);
+            
+            // 正しい形式のデータかどうかの簡単なチェック
+            if (Array.isArray(importedData)) {
+                if (confirm('現在のデータを上書きして復元しますか？\n（今のクイズは消え、バックアップファイルの内容になります）')) {
+                    savedQuizzes = importedData;
+                    saveQuizzesToStorage(); // localStorageにも保存
+                    renderQuizList(); // 画面を更新
+                    alert('データの復元が完了しました！');
+                }
+            } else {
+                alert('ファイルの形式が正しくありません。');
+            }
+        } catch (error) {
+            alert('ファイルの読み込みに失敗しました。対応していないファイルかもしれません。');
+        }
+    };
+    
+    // テキストとして読み込む
+    reader.readAsText(file);
+    
+    // 同じファイルを連続で選べるようにリセットしておく
+    event.target.value = '';
+});
