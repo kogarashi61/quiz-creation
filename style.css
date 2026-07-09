@@ -1,3 +1,4 @@
+/* 全体 */
 html, body {
     font-family: sans-serif;
     background-color: #f7f7f7; 
@@ -24,7 +25,7 @@ h1, h2, h3, h4 {
     text-align: center;
 }
 
-/* ＋クイズを追加ボタン（左下固定） */
+/* クイズ追加ボタン */
 .fab-btn {
     position: fixed;
     bottom: 20px;
@@ -43,7 +44,7 @@ h1, h2, h3, h4 {
     justify-content: center;
 }
 
-/* メニューボタン（左上） */
+/* メニューボタン */
 .menu-btn {
     position: absolute;
     top: 5px;
@@ -62,7 +63,7 @@ h1, h2, h3, h4 {
     z-index: 100;
 }
 
-/* メニューモーダルのデザイン */
+/* メニューモーダル */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -109,7 +110,7 @@ h1, h2, h3, h4 {
     cursor: pointer;
 }
 
-/* クイズ一覧のレイアウト */
+/* クイズ一覧 */
 .quiz-list {
     display: flex;
     flex-direction: column;
@@ -161,23 +162,23 @@ h1, h2, h3, h4 {
     z-index: 1;
 }
 
-/* クイズ設定・編集エリア共通 */
+/* 出題順序・クイズエリア共通 */
 .quiz-box, .edit-box {
     background-color: #f7f7f7; 
     padding: 30px;
-    margin-bottom: 25px;
+    margin: 25px auto 25px;
     border-radius: 12px;
     text-align: center;
 }
 
-/* 出題の順序エリアの個別設定 */
+/* 出題順序エリア */
 #modeSelectArea {
     background-color: #ffffff; 
     border: 2px solid #9a9a9a;
     box-sizing: border-box;
 }
 
-/* クイズプレイ中エリアの個別設定 */
+/* クイズプレイ中エリア */
 #quizBoxArea {
     background-color: #ffffff; 
     border: 2px solid #9a9a9a;
@@ -185,7 +186,7 @@ h1, h2, h3, h4 {
     border-radius: 0; 
 }
 
-/* 編集画面のデザイン */
+/* クイズ編集画面 */
 .edit-box {
     text-align: left;
     padding: 10px;
@@ -213,7 +214,7 @@ textarea {
     color: #333;
 }
 
-/* 問題数表示のデザイン */
+/* 問題数表示 */
 .progress-display {
     font-size: 18px;
     color: #888;
@@ -222,13 +223,12 @@ textarea {
 }
 
 #question {
-    /* fontSizeはJS制御にしました */
     margin: 5px 0 5px 0;
     color: #333; 
     min-height: 48px; 
 }
 
-/* 解答表示エリア（ズレ防止のため line-height と min-height を固定） */
+/* 解答表示エリア */
 .answer-display {
     font-size: 20px;
     font-weight: bold;
@@ -264,7 +264,7 @@ button {
     justify-content: center;
 }
 
-/* 一覧に戻る・キャンセルなどのボタングレー */
+/* 一覧に戻る・キャンセル */
 .secondary-btn {
     background-color: #b0b0b0; 
 }
@@ -288,7 +288,7 @@ button {
     opacity: 1 !important;
 }
 
-/* 間違えた問題リストのデザイン */
+/* 間違えた問題リスト */
 .mistake-list {
     display: flex;
     flex-direction: column;
