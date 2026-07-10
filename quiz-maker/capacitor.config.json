@@ -1,0 +1,10 @@
+{
+  "appId": "com.quiz.app",
+  "appName": "らくらくクイズメーカー",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
