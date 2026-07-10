@@ -616,24 +616,11 @@ document.getElementById('submitBtn').addEventListener('mousedown', function(even
 document.getElementById('submitBtn').addEventListener('click', checkAnswer);
 
 document.getElementById('answerInput').addEventListener('keydown', function(event) {
-    // 判定後、Enter以外のキー入力をキャンセルする
-    if (isWaitingForNext && event.key !== 'Enter') {
-        event.preventDefault();
-        return;
-    }
-
     if (event.key === 'Enter') {
         event.preventDefault(); 
         checkAnswer();
     }
 });
-
-document.getElementById('answerInput').addEventListener('input', function(event) {
-    if (isWaitingForNext) {
-        this.value = ''; // 文字が入っても即座に消去する
-    }
-});
-
 
 document.getElementById('restartBtn').addEventListener('click', function() {
     mistakes = [];
