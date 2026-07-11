@@ -67,7 +67,7 @@ function parseRawText(text, delimiter) {
         } else {
             parts = line.split(/[ \u3000\t]+/);
         }
-        
+       
         parts = parts.map(p => p.trim()).filter(p => p !== '');
 
         if (parts.length >= 2) {
@@ -149,6 +149,7 @@ function renderQuizList() {
         playBtn.className = 'quiz-item-btn';
 
         if (isReorderMode) {
+            container.classList.add('reorder-mode');
             const isSelected = selectedQuizIds.includes(quiz.id);
             playBtn.innerHTML = `
                 <div class="select-btn-wrapper">
@@ -198,7 +199,7 @@ function renderQuizList() {
 
 document.getElementById('bulkDeleteQuizBtn').onclick = () => {
     if (selectedQuizIds.length === 0) { alert('選択されていません。'); return; }
-    if (confirm(`選択した ${selectedQuizIds.length} 件のクイズセットを削除しますか？`)) {
+    if (confirm(`選択した ${selectedQuizIds.length} 件のクイズリストを削除しますか？`)) {
         savedQuizzes = savedQuizzes.filter(q => !selectedQuizIds.includes(q.id));
         saveQuizzesToStorage();
         selectedQuizIds = [];
@@ -228,7 +229,7 @@ document.getElementById('bulkCopyQuizBtn').onclick = () => {
     document.getElementById('toggleReorderBtn').textContent = '編集';
     document.getElementById('homeActionBar').style.display = 'none';
     renderQuizList();
-    alert('クイズセットを複製しました。');
+    alert('クイズリストを複製しました。');
 };
 
 /* =========================================================================
@@ -333,14 +334,14 @@ function updateOrderFromDOM(listId, arrayRef) {
 document.getElementById('editQuizBtn').addEventListener('click', function() {
     document.getElementById('editTitle').value = editingQuiz.title;
     document.getElementById('editDelimiter').value = editingQuiz.delimiter || '';
-    
+   
     const fSize = editingQuiz.fontSize || 30;
     document.getElementById('editFontSize').value = fSize;
     document.getElementById('fontSizeDisplay').textContent = fSize;
-    
+   
     currentTextAlign = editingQuiz.textAlign || 'center';
     updateAlignUI();
-    
+   
     tempRawText = editingQuiz.rawText || rebuildRawText(editingQuiz.words, editingQuiz.delimiter);
     showScreen('editScreen');
 });
@@ -364,7 +365,7 @@ document.getElementById('saveEditBtn').addEventListener('click', function() {
     const fSize = parseInt(document.getElementById('editFontSize').value, 10);
    
     const parsed = parseRawText(tempRawText, delimiterInput);
-    if (parsed.hasError) { alert('設定された区切り文字で正しく区切られていない行があります。「編集する」から修正してください。'); return; }
+    if (parsed.hasError) { alert('設定された区切り文字で区切られていない問題があります。'); return; }
 
     if (editingQuiz) {
         editingQuiz.title = finalTitle;
@@ -499,7 +500,7 @@ document.getElementById('qlFilterMistakeBtn').addEventListener('click', function
 
 document.getElementById('qlToggleReorderBtn').addEventListener('click', function() {
     if (isMistakeFilterMode) {
-        alert('絞り込み中は並び替え・編集はできません。');
+        alert('絞り込み中は編集できません。');
         return;
     }
     isQlReorderMode = !isQlReorderMode;
@@ -523,15 +524,19 @@ function renderQuestionList() {
     if (isMistakeFilterMode) {
         displayWords = editingQuiz.words.filter(w => w.lastMistaked);
         if (displayWords.length === 0) {
-            listDiv.innerHTML = '<p style="text-align:center; color:#888;">間違えた問題はありません。</p>';
+            listDiv.style.marginTop = '60px';
+            listDiv.innerHTML = '<p style="text-align:center; color:#888; margin-top: 0;">間違えた問題がありません。</p>';
             return;
         }
     }
 
     if (displayWords.length === 0) {
-        listDiv.innerHTML = '<p style="text-align:center; color:#888;">問題がありません。</p>';
+        listDiv.style.marginTop = '60px';
+        listDiv.innerHTML = '<p style="text-align:center; color:#888; margin-top: 0;">問題がありません。</p>';
         return;
     }
+
+    listDiv.style.marginTop = '42px';
 
     displayWords.forEach((w) => {
         const originalIndex = editingQuiz.words.findIndex(orig => orig.id === w.id);
@@ -549,9 +554,9 @@ function renderQuestionList() {
                 <div class="select-btn-wrapper">
                     <div class="select-round-btn ${isSelected ? 'active' : ''}"></div>
                 </div>
-                <span class="q-list-text">${w.q}</span>
+                <span class="q-list-text q-text-q">${w.q}</span>
                 <div class="q-list-div"></div>
-                <span class="q-list-text">${w.a.join(' ')}</span>
+                <span class="q-list-text q-text-a">${w.a.join(' ')}</span>
                 <div class="drag-handle">=</div>
             `;
 
@@ -573,9 +578,9 @@ function renderQuestionList() {
         } else {
             c.innerHTML = `
                 <span class="q-list-num">${originalIndex + 1}</span>
-                <span class="q-list-text">${w.q}</span>
+                <span class="q-list-text q-text-q">${w.q}</span>
                 <div class="q-list-div"></div>
-                <span class="q-list-text">${w.a.join(' ')}</span>
+                <span class="q-list-text q-text-a">${w.a.join(' ')}</span>
                 <button class="q-list-btn">></button>
             `;
            
@@ -588,10 +593,10 @@ function renderQuestionList() {
                 if (confirm(`この問題を削除しますか？`)) {
                     editingQuiz.words = editingQuiz.words.filter(item => item.id !== w.id);
                     editingQuiz.rawText = rebuildRawText(editingQuiz.words, editingQuiz.delimiter);
-                    originalQuizWords = editingQuiz.words; 
+                    originalQuizWords = editingQuiz.words;
                     saveQuizzesToStorage();
                     renderQuestionList();
-                    renderQuizList(); 
+                    renderQuizList();
                 }
             };
             wrapper.appendChild(deleteBtn);
@@ -605,7 +610,7 @@ function renderQuestionList() {
 function openSingleEdit(word) {
     editingWordId = word.id;
     document.getElementById('singleQInput').value = word.q;
-    
+   
     const sep = editingQuiz.delimiter ? editingQuiz.delimiter : ' ';
     document.getElementById('singleAInput').value = word.a.join(sep);
     showScreen('singleWordEditScreen');
@@ -630,9 +635,9 @@ document.getElementById('saveSingleEditBtn').addEventListener('click', () => {
     const aRaw = document.getElementById('singleAInput').value.trim();
    
     if (!q || !aRaw) { alert('問題と解答を入力してください。'); return; }
-    
+   
     const delim = editingQuiz.delimiter || '';
-    
+   
     if (delim) {
         if (q.includes(delim)) {
             alert(`問題文に区切り文字「${delim}」は使用できません。`);
@@ -640,7 +645,7 @@ document.getElementById('saveSingleEditBtn').addEventListener('click', () => {
         }
     } else {
         if (/[ \u3000\t]/.test(q)) {
-            alert('問題文に区切り文字（スペースやタブ）は使用できません。');
+            alert('問題文に区切り文字（スペース）は使用できません。');
             return;
         }
     }
@@ -656,9 +661,9 @@ document.getElementById('saveSingleEditBtn').addEventListener('click', () => {
     if (target) {
         target.q = q; target.a = aArr;
         editingQuiz.rawText = rebuildRawText(editingQuiz.words, editingQuiz.delimiter);
-        originalQuizWords = editingQuiz.words; 
+        originalQuizWords = editingQuiz.words;
         saveQuizzesToStorage();
-        renderQuizList(); 
+        renderQuizList();
     }
     renderQuestionList();
     showScreen('questionListScreen');
@@ -671,10 +676,10 @@ document.getElementById('bulkDeleteWordBtn').onclick = () => {
     if (confirm(`選択した ${selectedWordIds.length} 問の問題を削除しますか？`)) {
         editingQuiz.words = editingQuiz.words.filter(w => !selectedWordIds.includes(w.id));
         editingQuiz.rawText = rebuildRawText(editingQuiz.words, editingQuiz.delimiter);
-        originalQuizWords = editingQuiz.words; 
+        originalQuizWords = editingQuiz.words;
         saveQuizzesToStorage();
-        renderQuizList(); 
-        
+        renderQuizList();
+       
         selectedWordIds = [];
         isQlReorderMode = false;
         document.getElementById('qlToggleReorderBtn').textContent = '編集';
@@ -700,13 +705,13 @@ function openMoveModal() {
     const modal = document.getElementById('moveModal');
     const targetList = document.getElementById('moveTargetList');
     targetList.innerHTML = '';
-    
+   
     savedQuizzes.forEach(quiz => {
         if (currentBulkMode === 'move' && quiz.id === editingQuiz.id) return;
-        
+       
         const targetDelim = quiz.delimiter || '';
         const currentDelim = editingQuiz.delimiter || '';
-        if (targetDelim !== currentDelim) return; 
+        if (targetDelim !== currentDelim) return;
 
         const btn = document.createElement('button');
         btn.className = 'move-target-item-btn';
@@ -716,7 +721,7 @@ function openMoveModal() {
     });
 
     if(targetList.innerHTML === '') {
-        targetList.innerHTML = '<p style="color:#888; text-align:center; font-size:14px;">移動可能な別クイズセット（区切り文字が同じ）がありません。</p>';
+        targetList.innerHTML = '<p style="color:#888; text-align:center; font-size:14px;">移動可能なクイズリストがありません。</p>';
     }
     modal.style.display = 'flex';
 }
@@ -751,17 +756,17 @@ function executeBulkMove(targetQuizId) {
         editingQuiz.rawText = rebuildRawText(editingQuiz.words, editingQuiz.delimiter);
     }
 
-    originalQuizWords = editingQuiz.words; 
+    originalQuizWords = editingQuiz.words;
     saveQuizzesToStorage();
     renderQuizList();
 
     document.getElementById('moveModal').style.display = 'none';
-    
+   
     selectedWordIds = [];
     isQlReorderMode = false;
     document.getElementById('qlToggleReorderBtn').textContent = '編集';
     document.getElementById('qlActionBar').style.display = 'none';
-    
+   
     renderQuestionList();
     alert('処理が完了しました。');
 }
@@ -782,7 +787,6 @@ function startQuizSettings(quiz) {
         document.getElementById('resumeArea').style.display = 'none';
     }
 
-    // 【バグ修正】結果画面で外側に移動した間違えた問題コンテナを元の位置に戻し、非表示にしてリセットする
     const quizBox = document.getElementById('quizBoxArea');
     const mistakeContainer = document.getElementById('mistakeContainer');
     quizBox.appendChild(mistakeContainer);
@@ -831,16 +835,16 @@ document.getElementById('orderSeqBtn').onclick = () => { confOrder = 'seq'; upda
 document.getElementById('orderRandBtn').onclick = () => { confOrder = 'rand'; updateSettingsUI(); };
 
 document.getElementById('resetMistakesBtn').onclick = () => {
-    if (confirm('本当に間違えた問題の記録をリセットしますか？')) {
+    if (confirm('間違えた問題の記録をリセットしますか？')) {
         editingQuiz.words.forEach(w => w.lastMistaked = false);
         saveQuizzesToStorage();
         updateSettingsUI();
     }
 };
 
-document.getElementById('cancelQuizBtn').onclick = () => { 
+document.getElementById('cancelQuizBtn').onclick = () => {
     renderQuizList();
-    showScreen('homeScreen'); 
+    showScreen('homeScreen');
 };
 
 document.getElementById('startQuizBtn').onclick = () => {
@@ -873,11 +877,11 @@ function beginQuizUI() {
     document.getElementById('quizControls').style.display = 'flex';
     document.getElementById('mistakeContainer').style.display = 'none';
     document.getElementById('resultStats').style.display = 'none';
-    
+   
     document.getElementById('question').style.display = 'block';
     document.getElementById('resultHeader').style.display = 'none';
     document.getElementById('resultTotalCountDisplay').style.display = 'none';
-    
+   
     const quizBox = document.getElementById('quizBoxArea');
     const mistakeContainer = document.getElementById('mistakeContainer');
     quizBox.appendChild(mistakeContainer);
@@ -972,7 +976,7 @@ function finishQuiz() {
     document.getElementById('resultHeader').style.display = 'block';
     document.getElementById('resultTotalCountDisplay').style.display = 'block';
     document.getElementById('resultTotalCountDisplay').textContent = `全${currentQuizData.length}問`;
-    
+   
     document.getElementById('progressDisplay').textContent = '';
    
     const wrong = mistakesThisRound.length;
@@ -994,7 +998,7 @@ function finishQuiz() {
     const mistakeContainer = document.getElementById('mistakeContainer');
     if (mistakesThisRound.length > 0) {
         const quizScreen = document.getElementById('quizScreen');
-        quizScreen.appendChild(mistakeContainer); 
+        quizScreen.appendChild(mistakeContainer);
     }
 }
 
@@ -1017,7 +1021,7 @@ document.getElementById('answerInput').addEventListener('keydown', e => { if (e.
 document.getElementById('restartBtn').addEventListener('click', () => {
     editingQuiz.progress = null;
     let targetWords = confTarget === 'all' ? [...originalQuizWords] : originalQuizWords.filter(w => w.lastMistaked);
-    if (targetWords.length === 0) { alert('間違えた問題は0問です。'); startQuizSettings(editingQuiz); return; }
+    if (targetWords.length === 0) { alert('間違えた問題がありません。'); startQuizSettings(editingQuiz); return; }
     if (confOrder === 'rand') targetWords = shuffleArray(targetWords);
     currentQuizData = targetWords;
     currentIndex = 0; mistakesThisRound = [];
@@ -1051,9 +1055,17 @@ document.getElementById('importFile').addEventListener('change', e => {
             const data = JSON.parse(ev.target.result);
             if (Array.isArray(data) && confirm('現在のデータを上書きして復元しますか？')) {
                 savedQuizzes = data; saveQuizzesToStorage(); renderQuizList();
-                alert('復元しました！'); document.getElementById('menuModal').style.display = 'none';
+                alert('復元が完了しました。'); document.getElementById('menuModal').style.display = 'none';
             }
         } catch (err) { alert('ファイルの読み込みに失敗しました。'); }
     };
     reader.readAsText(file); e.target.value = '';
 });
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}

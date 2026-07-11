@@ -1,5 +1,5 @@
 /* =========================================================================
-   1. 全体のレイアウト・共通パーツ設定
+   1. 初期化・共通パーツ設定
 ========================================================================= */
 html, body {
     font-family: sans-serif;
@@ -27,7 +27,7 @@ button {
 .primary-btn { background-color: #85c1a5; }  
 .secondary-btn { background-color: #b0b0b0; }
 .accent-btn { background-color: #c5a58c; }    
-.danger-btn { background-color: #d32f2f; }
+.danger-btn { background-color: #f44336; }
 
 .icon-btn {
     background: transparent; border: none; color: #333; font-size: 24px;
@@ -44,26 +44,27 @@ input[type="text"], textarea {
     color: #555;
     cursor: pointer;
     padding: 4px 14px;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     border: 1px solid #b0b0b0;
     border-radius: 4px;
     box-sizing: border-box;
     height: 32px;
+    min-width: 60px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
 }
 .header-btn.active {
-    background-color: #e91e63;
+    background-color: #f44336;
     color: #ffffff;
-    border-color: #e91e63;
+    border-color: #f44336;
 }
 
 .fixed-back-btn {
     position: fixed; top: 15px; left: 15px; z-index: 2000;
     background-color: #ffffff; color: #333; border: 1px solid #b0b0b0;
-    border-radius: 4px; padding: 4px 14px; font-weight: bold; font-size: 16px;
+    border-radius: 20px; padding: 8px 16px; font-weight: bold; font-size: 24px; font-weight: bold;
     cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -71,8 +72,8 @@ input[type="text"], textarea {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
     width: 100%; max-width: 540px; background-color: #ffffff;
     border-top: 1px solid #ccc; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    padding: 12px 20px; box-sizing: border-box;
-    display: flex; justify-content: center; gap: 10px; z-index: 1500;
+    padding: 12px; box-sizing: border-box;
+    display: flex; justify-content: center; gap: 6px; z-index: 1500;
 }
 .action-bar button {
     flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px;
@@ -118,6 +119,12 @@ input[type="text"], textarea {
 
 .quiz-list { display: flex; flex-direction: column; gap: 8px; margin-top: 30px; }
 .quiz-item-container { position: relative; display: flex; overflow: hidden; background: #fff;}
+.quiz-item-container.reorder-mode {
+    background-color: #f7f7f7;
+}
+.quiz-item-container.reorder-mode .quiz-item-btn {
+    background-color: #ffffff;
+}
 
 .quiz-item-btn {
     flex-grow: 1; background-color: #ffffff; color: #333;
@@ -135,7 +142,7 @@ input[type="text"], textarea {
 
 .quiz-count-text {
     position: absolute; right: 14px;
-    color: #aaa; font-weight: normal; font-size: 14px; flex-shrink: 0; 
+    color: #aaa; font-weight: normal; font-size: 14px; flex-shrink: 0;
 }
 .quiz-item-container .drag-handle {
     position: absolute; right: 0; top: 0; bottom: 0;
@@ -145,7 +152,7 @@ input[type="text"], textarea {
 
 .delete-btn {
     position: absolute; right: 0; top: 0; bottom: 0; width: 80px;
-    border: none; border-radius: 0; background-color: #d32f2f; color: white;
+    border: none; border-radius: 0; background-color: #f44336; color: white;
     font-size: 16px; font-weight: bold; cursor: pointer; z-index: 1;
 }
 
@@ -191,7 +198,7 @@ input[type="text"], textarea {
 }
 .editor-bg { color: transparent; pointer-events: none; position: absolute; top: 0; left: 0; overflow: hidden; }
 .editor-bg-row { min-height: 32px; }
-.error-line { background-color: rgba(255, 67, 54, 0.3); }
+.error-line { background-color: rgba(255, 67, 54, 0.2); margin: 0 -10px;}
 
 /* =========================================================================
    5. 問題一覧画面の設定
@@ -204,16 +211,22 @@ input[type="text"], textarea {
 
 .q-list-item {
     flex-grow: 1; display: flex; align-items: center; background: #fff;
-    padding: 10px 44px 10px 10px; 
+    padding: 10px 44px 10px 10px;
     position: relative; min-height: 44px; box-sizing: border-box;
     z-index: 2; width: 100%; transition: transform 0.05s ease-out; cursor: pointer;
 }
 
 .q-list-num { width: 30px; color: #888; font-size: 14px; font-weight: bold; flex-shrink: 0; text-align: left; }
 .q-list-text {
-    flex: 1; font-size: 16px; white-space: normal; word-break: break-all; line-height: 1.4;
+    font-size: 12px; white-space: normal; word-break: break-all; line-height: 1.4;
 }
-.q-list-div { width: 1px; background: #e0e0e0; height: 20px; margin: 0 10px; flex-shrink: 0; }
+.q-list-item .q-text-q {
+    flex: 6;
+}
+.q-list-item .q-text-a {
+    flex: 4;
+}
+.q-list-div { width: 1px; background: #e0e0e0; align-self: stretch; height: auto; margin: 4px 10px; flex-shrink: 0; }
 
 .q-list-btn, .q-list-item .drag-handle {
     position: absolute; right: 0; top: 0; bottom: 0;
@@ -235,8 +248,8 @@ input[type="text"], textarea {
    6. クイズプレイ画面の動的パーツ設定
 ========================================================================= */
 #question { margin: 5px 0; color: #333; min-height: 48px; }
-.answer-display { font-size: 20px; font-weight: bold; color: #e91e63; min-height: 22px; line-height: 22px; margin: -4px auto 4px; }
-.progress-display { font-size: 18px; color: #888; margin-bottom: 20px; font-weight: bold; }
+.answer-display { font-size: 20px; font-weight: bold; color: #f44336; min-height: 22px; line-height: 22px; margin: -4px auto 4px; }
+.progress-display { font-size: 18px; color: #888; margin-bottom: 20px; font-weight: bold;}
 
 #submitBtn { display: block; margin: 0 auto; width: 50%; }
 
@@ -250,11 +263,10 @@ input[type="text"], textarea {
 }
 .show-mark { opacity: 1 !important; }
 
-/* 【修正】間違えた問題表示コンテナを実線白枠ボックスに変更（点線枠は削除） */
 #mistakeContainer {
     background-color: #ffffff;
     border: 2px solid #9a9a9a;
-    padding: 25px 30px;
+    padding: 30px 10px;
     margin: 25px auto 0 auto;
     box-sizing: border-box;
 }
