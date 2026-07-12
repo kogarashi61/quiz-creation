@@ -175,7 +175,7 @@ input[type="text"], textarea {
 
 .toggle-group { display: flex; gap: 0px; margin-bottom: 10px; }
 .toggle-btn {
-    flex: 1; background-color: #e0e0e0; color: #666; border: 2px solid transparent; padding: 8px 12px; transition: 0.2s;}
+    flex: 1; background-color: #e0e0e0; color: #888; border: 2px solid transparent; padding: 8px 12px; transition: 0.2s;}
 .toggle-btn.active { background-color: #85c1a5; color: white; }
 .toggle-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
